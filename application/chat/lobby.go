@@ -2,25 +2,26 @@ package chat
 
 import (
 	"fmt"
+	"log"
 	"slices"
 
 	"github.com/google/uuid"
 )
 
 type Lobby struct {
-	clients []*Client
-	rooms   []*Room
+	Clients []*Client
+	Rooms   []*Room
 }
 
 func (l *Lobby) Broadcast(sender *Client, message string) {
-	for _, receiver := range l.clients {
+	for _, receiver := range l.Clients {
 		receiver.Write(message, sender)
 	}
 }
 
 func (l *Lobby) GetRoomByName(name string) *Room {
-	for _, room := range l.rooms {
-		if room.name == name {
+	for _, room := range l.Rooms {
+		if room.Name == name {
 			return room
 		}
 	}
@@ -28,30 +29,30 @@ func (l *Lobby) GetRoomByName(name string) *Room {
 }
 
 func (l *Lobby) RemoveClient(client *Client) {
-	for i, clientInLobby := range l.clients {
-		if clientInLobby.id == client.id {
-			l.clients = slices.Delete(l.clients, i, i+1)
+	for i, clientInLobby := range l.Clients {
+		if clientInLobby.Id == client.Id {
+			l.Clients = slices.Delete(l.Clients, i, i+1)
 			break
 		}
 	}
 }
 
 func (l *Lobby) JoinClient(client *Client) {
-	l.clients = append(l.clients, client)
+	l.Clients = append(l.Clients, client)
 }
 
 func (l *Lobby) NewRoom(name string) *Room {
 	var clients []*Client
-	room := &Room{id: uuid.New().String(), name: name, clients: clients, lobby: l}
-	fmt.Printf(ROOM_CREATED, room.id)
-	l.rooms = append(l.rooms, room)
+	room := &Room{Id: uuid.New().String(), Name: name, Clients: clients, Lobby: l}
+	log.Printf(ROOM_CREATED, room.Id)
+	l.Rooms = append(l.Rooms, room)
 	return room
 }
 
 func (l *Lobby) RemoveRoom(id string) {
-	for i, room := range l.rooms {
-		if room.id == id {
-			l.rooms = slices.Delete(l.rooms, i, i+1)
+	for i, room := range l.Rooms {
+		if room.Id == id {
+			l.Rooms = slices.Delete(l.Rooms, i, i+1)
 			break
 		}
 	}
@@ -59,15 +60,15 @@ func (l *Lobby) RemoveRoom(id string) {
 }
 
 func (l *Lobby) ListRooms(client *Client) {
-	if l.rooms == nil {
+	if l.Rooms == nil {
 		client.Log(NO_ROOMS)
 		return
 	}
-	for _, room := range l.rooms {
-		if client.room.id == room.id {
+	for _, room := range l.Rooms {
+		if client.Room.Id == room.Id {
 			client.Log(CURRENT_ROOM_ICON)
 		}
-		client.Log(fmt.Sprintf("%s\n", room.name))
+		client.Log(fmt.Sprintf("%s\n", room.Name))
 	}
 }
 
@@ -83,6 +84,6 @@ func (l *Lobby) Help(client *Client) {
 
 func NewLobby() *Lobby {
 	return &Lobby{
-		clients: []*Client{},
+		Clients: []*Client{},
 	}
 }

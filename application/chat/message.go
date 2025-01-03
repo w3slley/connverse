@@ -3,7 +3,7 @@ package chat
 import "time"
 
 type Message struct {
-	sender  *Client
-	message string
-	time    time.Time
+	Sender  *Client
+	Message string
+	Time    time.Time
 }

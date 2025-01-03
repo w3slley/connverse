@@ -2,7 +2,7 @@ package main
 
 import (
 	"bufio"
-	"fmt"
+	"log"
 	"net"
 	"os"
 	"sync"
@@ -22,10 +22,10 @@ func Read(conn net.Conn) {
 	for {
 		message, err := reader.ReadString('\n')
 		if err != nil {
-			fmt.Println("Disconnected")
+			log.Println("Disconnected")
 			return
 		}
-		fmt.Print(message)
+		log.Print(message)
 	}
 }
 
@@ -36,18 +36,18 @@ func Write(conn net.Conn) {
 	for {
 		message, err := reader.ReadString('\n')
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 			os.Exit(1)
 		}
 
 		_, err = writer.WriteString(message)
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 			os.Exit(1)
 		}
 
 		if err = writer.Flush(); err != nil {
-			fmt.Println(err)
+			log.Println(err)
 			os.Exit(1)
 		}
 	}
@@ -58,7 +58,7 @@ func main() {
 
 	conn, err := net.Dial(PROTOCOL, CONN)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 
 	go Read(conn)

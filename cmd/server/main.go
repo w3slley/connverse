@@ -1,11 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net"
 
-	"connverse/internal/chat"
+	"connverse/application/chat"
+	"connverse/infrastructure/http"
 )
 
 const (
@@ -20,22 +20,14 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	defer listener.Close()
-
-	fmt.Println("Listenning on " + CONN + " 🚀")
-
+	log.Println("Listenning on " + CONN + " 🚀")
 	lobby := chat.NewLobby()
-
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
 			log.Println("Error: ", err)
 		}
-
-		client := chat.NewClient(conn)
-		lobby.JoinClient(client)
-
-		go chat.HandleClientInput(client, lobby)
+		go http.HandleClientInput(conn, lobby)
 	}
 }
